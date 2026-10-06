@@ -1,0 +1,106 @@
+# Desired state for a new Walter v2 development machine on Google Cloud.
+# Credentials stay in COLORS_PAR_* environment variables. Never set COLORS_PAR_PROFILE.
+profile: walter-google-big
+workdir: .colors
+compute-api-version: 2
+users: [rose, jack]
+
+provider-compute: google
+provider-backend: r2
+compute-prevent-destroy: true
+
+# C4A ARM: 4 cores, 16 GiB RAM and exactly one 375 GiB Local SSD.
+# Pricing target: a separate 36-month general-purpose-c4a resource commitment
+# for vcpu=4,memory=16GB,local-ssd=375GB in europe-west4. Not bought by create.
+google-project: pocketcontext
+google-region: europe-west4
+google-zone: europe-west4-b
+google-machine-type: c4a-standard-4-lssd
+google-local-ssd-count: 1
+local-ssd-scratch: true
+google-boot-disk-type: hyperdisk-balanced
+google-nic-type: GVNIC
+google-image-project: ubuntu-os-cloud
+google-image-family: ubuntu-2404-lts-arm64
+google-image-id: projects/ubuntu-os-cloud/global/images/ubuntu-2404-noble-arm64-v20260918
+google-subnet-cidr: 10.43.0.0/24
+google-boot-disk-size-gb: 200
+
+# Dedicated R2 bucket must exist before create; credentials come from .envrc.private.
+r2-bucket: walter-google-big
+r2-endpoint: https://319271fed8bc6d2d9059362be1165f37.eu.r2.cloudflarestorage.com
+
+# Encrypted SSH resource: supply COLORS_PAR_WALTER_SSH_PASSPHRASE at runtime.
+# Create/delete retain this named authority; each access scope owns an agent.
+# This is a new deployment. No v1 resources or state are adopted.
+
+# --- GitHub identity --------------------------------------------------------
+# A real create starts GitHub's device flow before provisioning. The resulting
+# machine-owned token is used for HTTPS clones; no GitHub SSH key or forwarded
+# workstation agent reaches the server.
+github-account: amiorin
+git-email: 32617+amiorin@users.noreply.github.com
+
+emacs-config-repo: https://github.com/amiorin/.emacs.d.git
+emacs-config-dest: ~/.config/neoemacs
+
+# --- Tooling ---------------------------------------------------------------
+nix-packages:
+  - asdf-vm
+  - ripgrep
+  - fd
+  - fish
+  - fzf
+  - gh
+  - caddy
+  - awscli2
+  - azure-cli
+  - google-cloud-sdk
+  - oci-cli
+  - babashka
+  - clojure
+  - clojure-lsp
+  - starship
+  - zoxide
+  - atuin
+  - direnv
+  - eza
+  - zellij
+  - gcc
+  - devenv
+  - age
+
+agent-tools: [pi, codex, claude, antigravity]
+
+login-shell: fish
+
+asdf-tools:
+  - name: nodejs
+    version: latest
+    plugin: https://github.com/asdf-vm/asdf-nodejs.git
+  - name: uv
+    version: latest
+    plugin: https://github.com/asdf-community/asdf-uv.git
+  - name: bun
+    version: latest
+    plugin: https://github.com/cometkim/asdf-bun.git
+
+  - name: python
+    version: latest
+    plugin: https://github.com/asdf-community/asdf-python.git
+
+corepack-packages:
+  - pnpm
+
+dotfiles-checkout: ~/code/getcolors/dotfiles
+
+clone-orgs:
+  - getcolors
+  - pocketcontext
+
+atuin-username: amiorin
+
+seed-agent-credentials:
+  - claude
+  - codex
+  - pi

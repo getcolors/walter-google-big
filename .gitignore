@@ -1,0 +1,8 @@
+.*
+!.gitignore
+!.envrc
+!.agents/
+.agents/*
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/package-walter-green/
