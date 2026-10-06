@@ -1,6 +1,6 @@
 # walter-google-big
 
-New ARM Google Cloud Walter deployment in project `pocketcontext`, zone
+ARM Google Cloud Walter deployment in project `pocketcontext`, zone
 `europe-west4-b`. Profile and dedicated R2 bucket are both `walter-google-big`.
 
 - `c4a-standard-4-lssd`: 4 ARM cores, 16 GiB RAM, one 375 GiB Local SSD.
@@ -24,14 +24,20 @@ Validate without credentials or cloud mutations:
 ./green create --dry-run
 ```
 
-Before a future live create, create the R2 bucket and supply provider/backend
-credentials and `COLORS_PAR_WALTER_SSH_PASSPHRASE` through the ignored
-`.envrc.private`. Its first line must be `# -*- mode: sh; -*-`.
+The private EU R2 bucket has been created, and the initial `./green create`
+completed successfully on October 6, 2026. The Local SSD mount and enabled boot
+service were verified, along with private scratch directories for all three
+users. Emacs package bootstrap runs asynchronously.
+
+Provider/backend credentials and `COLORS_PAR_WALTER_SSH_PASSPHRASE` are loaded
+through the ignored `.envrc.private`. Its first line must be
+`# -*- mode: sh; -*-`.
 Never export `COLORS_PAR_PROFILE`.
 
-Walter's compute pin uses the published `walter-local-ssd-20261006` release
-lineage, which includes explicit C4A disk declarations and retains the SSH
-caller contract implemented by this package. Newer compute main changes to
+Walter's compute pin uses the published `walter-empty-state-retry-20261006` release
+lineage. It includes explicit C4A disk declarations and the failed-first-apply
+retry fix, while retaining the SSH caller contract implemented by this package.
+Newer compute main changes to
 fresh SSH identity creation are not part of this dependency pin.
 
 ## Selected pricing option — not purchased
@@ -53,7 +59,8 @@ type does not enable a discount.
 
 The commitment cannot be cancelled after purchase and remains payable even
 without a VM. The deployment does not create, renew, or delete commitments.
-No VM, bucket, reservation, or commitment was created during preparation.
+The VM and bucket are deployed. No reservation or commitment was purchased;
+the VM currently uses on-demand billing.
 
 For a separately authorized future purchase, after verifying quota, existing
 commitments and actual pricing, the intended CLI request is:
